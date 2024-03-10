@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import java.util.Set;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
@@ -57,8 +58,109 @@ public class MainActivity extends AppCompatActivity {
             mStatusBlueTv.setText("BLUE TOOTH IS AVAILABLE");
         }
         //SET BLUE TOOTH IMAGE AS ON OR OFF
-        if (mBlueAdapter.isEnabled());{
-            
+           if  (mBlueAdapter.isEnabled()){
+          //  mStatusBlueTv.setText("Blue tooth is enabled");
+            mBlueIv.setImageResource(R.drawable.ic_action_on);
         }
+        else {
+           // mStatusBlueTv.setText("Blue tooth NOT ENABLE");
+               mBlueIv.setImageResource(R.drawable.ic_action_off);
+
+        }
+              //ON BUTTON CLICK
+        mOnBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                 if ( !mBlueAdapter.isEnabled()){
+                     toastMsg("Turning on Blue Tooth");
+                     //Intent to turn on blue tooth
+                     Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                      startActivityforResult (intent, REQUEST_ENABLE_BLUETOOTH);
+                 }
+
+                 else {
+
+                     toastMsg("Bluetooth is already on");
+                 }
+            }
+        });
+             //DISCOVER BUTTON
+        mDiscoverBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!mBlueAdapter.isDiscovering()) {
+                    toastMsg("Making your device discoverable");
+                    Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+                    startActivityforResult (intent, REQUEST_DISCOVER_BLUETOOTH);
+
+                }
+
+            }
+        });
+
+        //OFF BUTTON
+        mOffBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (mBlueAdapter.isEnabled()){
+                    mBlueAdapter.disable();
+                    toastMsg( "Turning Blue tooth off");
+                    mBlueIv.setImageResource(R.drawable.ic_action_off);
+                }
+                else {
+                    toastMsg("Bluetooth is already off");
+                }
+
+            }
+        });
+
+        mPairedBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mBlueAdapter.isEnabled()) {
+                    mPairedTv.setText("Paired devices ");
+                    Set<BluetoothDevice> devices = mBlueAdapter.getBondedDevices();
+                    for (BluetoothDevice: device: devices) {
+                        mPairedTv.append("\nDevice" + device.getName() + ","  + device);
+
+                    }
+
+                }
+                else {
+
+                    //bluetooth is not connected and cant get info
+                    toastMsg("Turn on bletooth if you want shared devices ");
+                }
+
+            }
+        });
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+
+        switch (requestCode) {
+            case REQUEST_ENABLE_BLUETOOTH:
+                if (resultCode == RESULT_OK){
+                  //Blue tooth is on
+                    mBlueIv.setImageResource(R.drawable.ic_action_on);
+                }
+                else {
+                  //user denied to turn on blue tooth
+                  toastMsg("User declined to turn on blue tooth ");
+                }
+                break;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    // Set up toast
+    private void  toastMsg(String msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+    }
+
+
+
+
 }
