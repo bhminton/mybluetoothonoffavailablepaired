@@ -2,6 +2,7 @@ package com.example.mybluetoothonoffavailablepaired;
 
 
 
+import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
@@ -69,13 +70,15 @@ public class MainActivity extends AppCompatActivity {
         }
               //ON BUTTON CLICK
         mOnBtn.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("MissingPermission")
             @Override
             public void onClick(View v) {
                  if ( !mBlueAdapter.isEnabled()){
                      toastMsg("Turning on Blue Tooth");
                      //Intent to turn on blue tooth
                      Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                      startActivityforResult (intent, REQUEST_ENABLE_BLUETOOTH);
+                      startActivityForResult (intent,
+                              REQUEST_ENABLE_BLUETOOTH);
                  }
 
                  else {
@@ -86,12 +89,13 @@ public class MainActivity extends AppCompatActivity {
         });
              //DISCOVER BUTTON
         mDiscoverBtn.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("MissingPermission")
             @Override
             public void onClick(View v) {
                 if (!mBlueAdapter.isDiscovering()) {
                     toastMsg("Making your device discoverable");
                     Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-                    startActivityforResult (intent, REQUEST_DISCOVER_BLUETOOTH);
+                    startActivityForResult(intent, REQUEST_DISCOVER_BLUETOOTH);
 
                 }
 
@@ -121,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
                 if (mBlueAdapter.isEnabled()) {
                     mPairedTv.setText("Paired devices ");
                     Set<BluetoothDevice> devices = mBlueAdapter.getBondedDevices();
-                    for (BluetoothDevice: device: devices) {
+                    for (BluetoothDevice device: devices) {
                         mPairedTv.append("\nDevice" + device.getName() + ","  + device);
 
                     }
